@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEV.STATION // Sign Up</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,900&family=JetBrains+Mono:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+    <div class="wrapper">
+        <div class="top-bar">
+            <div class="logo">
+                <span class="logo-dot"></span>
+                <span>DEV.STATION</span>
+            </div>
+            <div class="status-bar">
+                <span>SYS <b>SECURE</b></span>
+                <span>AUTH_NODE <b>ONBOARDING</b></span>
+                <span id="clock">--:--:-- UTC</span>
+            </div>
+        </div>
+
+        <section class="hero auth-hero">
+            <div class="hero-label">// developer onboarding</div>
+            <h1>create your<br><em>developer identity</em></h1>
+            <p>connect your coding platforms and build your personalized AI-powered developer intelligence dashboard.</p>
+        </section>
+
+        <section class="panel auth-panel">
+            <div class="panel-header">
+                <div style="display:flex;gap:14px;align-items:center;">
+                    <span class="panel-tag">NEW</span>
+                    <span class="panel-title">Sign Up</span>
+                </div>
+                <span class="panel-meta">SECURE PROFILE REGISTRATION</span>
+            </div>
+            <div class="panel-body">
+                <div class="auth-form">
+                    <input class="auth-input" type="text" id="name" placeholder="Full Name" autocomplete="name" required autofocus />
+                    <input class="auth-input" type="email" id="email" placeholder="Email Address" autocomplete="email" required aria-required="true" />
+                    <input class="auth-input" type="password" id="password" placeholder="Password" required aria-required="true" />
+                    <label class="auth-toggle">
+                        <input type="checkbox" id="showSignupPw" />
+                        <span>Show password</span>
+                    </label>
+                    <input class="auth-input" type="text" id="github" placeholder="GitHub Username" autocomplete="off" required />
+                    <input class="auth-input" type="text" id="leetcode" placeholder="LeetCode Username" autocomplete="off" required />
+                    <input class="auth-input" type="text" id="codeforces" placeholder="Codeforces Handle" autocomplete="off" required />
+                </div>
+
+                <button onclick="signup()" id="signupBtn" class="auth-button">Create Account &rarr;</button>
+
+                <div id="signupMsg" class="auth-message"></div>
+
+                <div class="auth-footnote">
+                    Already have an account?
+                    <a href="login.html">Access Node &rarr;</a>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <span>// 2026 &middot; built on AWS Lambda + Groq</span>
+            <span class="brand-flair">&lt;/&gt; HAPPY HACKING</span>
+        </footer>
+    </div>
+
+    <script>
+        function tickClock() {
+            const d = new Date();
+            const t = [d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()]
+                .map(n => String(n).padStart(2, '0')).join(':');
+            document.getElementById('clock').textContent = t + ' UTC';
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function signup() {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const github = document.getElementById('github').value.trim();
+            const leetcode = document.getElementById('leetcode').value.trim();
+            const codeforces = document.getElementById('codeforces').value.trim();
+            const msgDiv = document.getElementById('signupMsg');
+
+            if (!name || !email || !password || !github || !leetcode || !codeforces) {
+                msgDiv.innerHTML = '<div class="error-message">ERR // all onboarding fields are required</div>';
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                msgDiv.innerHTML = '<div class="error-message">ERR // please enter a valid email address</div>';
+                return;
+            }
+
+            if (password.length < 8) {
+                msgDiv.innerHTML = '<div class="error-message">ERR // password must be at least 8 characters</div>';
+                return;
+            }
+
+            const user = { name, email, password, github, leetcode, codeforces };
+            localStorage.setItem('developerUser', JSON.stringify(user));
+
+            msgDiv.innerHTML = '<div class="loading">SYSTEM // account initialized successfully... redirecting to access node</div>';
+            document.getElementById('signupBtn').disabled = true;
+
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1200);
+        }
+
+        document.getElementById('showSignupPw').addEventListener('change', function () {
+            document.getElementById('password').type = this.checked ? 'text' : 'password';
+        });
+
+        tickClock();
+        setInterval(tickClock, 1000);
+    </script>
+</body>
+</html>

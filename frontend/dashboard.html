@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DEV.STATION // Command Center</title>
+
+    <!-- Synchronous Session Guard -->
+    <script>
+        if (!localStorage.getItem("loggedIn")) {
+            window.location.href = "login.html";
+        }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,900&family=JetBrains+Mono:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="wrapper">
+
+    <div class="top-bar">
+        <div class="logo">
+            <span class="logo-dot"></span>
+            <span>DEV.STATION</span>
+        </div>
+        <div class="status-bar">
+            <span>SYS <b>ONLINE</b></span>
+            <span>NODE <b>US-EAST-1</b></span>
+            <span id="clock">--:--:-- UTC</span>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="hero-label">// command_center v3.0</div>
+        <h1>your dev<br><em>command center</em></h1>
+        <p>a single console for GitHub recon, contest tracking, LeetCode analytics, and AI-powered code review &mdash; running on AWS Lambda with Groq inference under the hood.</p>
+    </section>
+
+    <!-- SECTION 1: MY DASHBOARD -->
+    <section class="panel">
+        <div class="panel-header">
+            <div style="display:flex;gap:14px;align-items:center;">
+                <span class="panel-tag" style="background:var(--purple);">01</span>
+                <span class="panel-title">My Dashboard</span>
+            </div>
+            <span class="panel-meta" id="myDashboardMeta">UNIFIED SESSION PROFILE</span>
+        </div>
+        <div class="panel-body">
+            <!-- Profile Results Container -->
+            <div id="myDashboardResult">
+                <div class="loading">initializing intelligence nodes...</div>
+            </div>
+            
+            <!-- GitHub Readme Stats Grid -->
+            <div class="readme-stats-grid" id="myReadmeStats" style="display:none;">
+                <div class="readme-stats-card">
+                    <img id="ghStatsImg" src="" alt="GitHub Stats" />
+                </div>
+                <div class="readme-stats-card">
+                    <img id="ghLangsImg" src="" alt="Top Languages" />
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: EXPLORE DEVELOPERS -->
+    <section class="panel">
+        <div class="panel-header">
+            <div style="display:flex;gap:14px;align-items:center;">
+                <span class="panel-tag" style="background:var(--indigo);">02</span>
+                <span class="panel-title">Explore Developers</span>
+            </div>
+            <span class="panel-meta">unified profile engine</span>
+        </div>
+        <div class="panel-body">
+            <div class="scan-grid" style="margin-bottom: 20px;">
+                <input type="text" id="scanGithub" placeholder="GitHub Username" autocomplete="off" />
+                <input type="text" id="scanLeetcode" placeholder="LeetCode Username" autocomplete="off" />
+                <input type="text" id="scanCodeforces" placeholder="Codeforces Handle" autocomplete="off" />
+            </div>
+            
+            <button onclick="triggerManualSearch()" id="exploreScanBtn" class="indigo" style="width: 100%;">Scan Developer Profile &rarr;</button>
+
+            <div id="scanResult" style="margin-top: 24px;">
+                <div class="placeholder">// search any developer's multi-platform profiles above</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PANEL 03: CONTESTS -->
+    <section class="panel">
+        <div class="panel-header">
+            <div style="display:flex;gap:14px;align-items:center;">
+                <span class="panel-tag">03</span>
+                <span class="panel-title">Upcoming Contests</span>
+            </div>
+            <span class="panel-meta">GET /contests</span>
+        </div>
+        <div class="panel-body">
+            <button onclick="getContests()" id="contestBtn" class="indigo">Fetch Contests &rarr;</button>
+            <div id="contestResult"></div>
+        </div>
+    </section>
+
+    <!-- PANEL 04: AI REVIEW -->
+    <section class="panel">
+        <div class="panel-header">
+            <div style="display:flex;gap:14px;align-items:center;">
+                <span class="panel-tag">04</span>
+                <span class="panel-title">AI Code Review &middot; Workbench</span>
+            </div>
+            <span class="panel-meta">POST /review &middot; groq</span>
+        </div>
+        <div class="panel-body">
+            <div class="review-workbench">
+                <div class="workbench-pane">
+                    <div class="pane-header input-pane">
+                        <span class="pane-label">your_code.txt</span>
+                        <span class="pane-stat" id="codeStats">0 lines &middot; 0 chars</span>
+                    </div>
+                    <div class="editor-area">
+                        <div class="line-gutter" id="lineGutter">1</div>
+                        <div class="editor-container">
+                            <pre id="highlighting" class="highlighting-pane" aria-hidden="true"><code id="highlightingCode" class="language-javascript"></code></pre>
+                            <textarea id="codeInput" class="code-editor" spellcheck="false" placeholder="// paste your code here..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workbench-pane">
+                    <div class="pane-header output-pane">
+                        <span class="pane-label">analysis.md</span>
+                        <span class="pane-stat" id="reviewStat">idle</span>
+                    </div>
+                    <div class="review-output" id="reviewResult">
+                        <div class="empty-output">
+                            <div class="icon">AI</div>
+                            <h4>Awaiting input</h4>
+                            <p>Paste your code on the left, then hit Analyze. The review will appear here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="workbench-toolbar">
+                <span class="toolbar-hint">
+                    Tip: press <kbd>Ctrl</kbd>+<kbd>Enter</kbd> to analyze
+                </span>
+                <button onclick="reviewCode()" id="reviewBtn">Analyze Code &rarr;</button>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <span>// 2026 &middot; built on AWS Lambda + Groq</span>
+        <span class="brand-flair">&lt;/&gt; HAPPY HACKING</span>
+    </footer>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-c.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

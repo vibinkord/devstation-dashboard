@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEV.STATION // Login</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,900&family=JetBrains+Mono:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="wrapper">
+
+    <div class="top-bar">
+        <div class="logo">
+            <span class="logo-dot"></span>
+            <span>DEV.STATION</span>
+        </div>
+        <div class="status-bar">
+            <span>SYS <b>SECURE</b></span>
+            <span>AUTH_NODE <b>ACCESS</b></span>
+            <span id="clock">--:--:-- UTC</span>
+        </div>
+    </div>
+
+    <section class="hero" style="max-width:700px;margin:0 auto 56px;">
+        <div class="hero-label">// secure access node</div>
+        <h1>enter your<br><em>command center</em></h1>
+        <p>continue to your AI-powered developer intelligence dashboard and unified identity console.</p>
+    </section>
+
+    <section class="panel" style="max-width:700px;margin:0 auto 28px;">
+        <div class="panel-header">
+            <div style="display:flex;gap:14px;align-items:center;">
+                <span class="panel-tag">AUTH</span>
+                <span class="panel-title">Login</span>
+            </div>
+            <span class="panel-meta">ACCESS DASHBOARD</span>
+        </div>
+        <div class="panel-body">
+            <div class="scan-grid" style="grid-template-columns: 1fr; margin-bottom: 20px;">
+                <input type="email" id="loginEmail" placeholder="Email Address" autocomplete="email" required />
+                <input type="password" id="loginPassword" placeholder="Password" required />
+            </div>
+
+            <button onclick="login()" id="loginBtn" style="width:100%;">Access Dashboard &rarr;</button>
+
+            <div id="loginMsg" style="margin-top:16px;"></div>
+
+            <div style="margin-top:24px; font-family:var(--mono); font-size:12px; color:var(--ink-soft); text-align:center;">
+                New here? 
+                <a href="signup.html" style="color:var(--indigo); text-decoration:none; font-weight:600;">Create account &rarr;</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <span>// 2026 &middot; built on AWS Lambda + Groq</span>
+        <span class="brand-flair">&lt;/&gt; HAPPY HACKING</span>
+    </footer>
+
+</div>
+
+<script>
+function tickClock() {
+    const d = new Date();
+    const t = [d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds()]
+        .map(n => String(n).padStart(2, '0')).join(':');
+    document.getElementById('clock').textContent = t + ' UTC';
+}
+tickClock();
+setInterval(tickClock, 1000);
+
+function login() {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+    const msgDiv = document.getElementById("loginMsg");
+
+    if (!email || !password) {
+        msgDiv.innerHTML = `
+            <div class="error-message">
+                ERR // email and password are required
+            </div>
+        `;
+        return;
+    }
+
+    const user = JSON.parse(localStorage.getItem("developerUser"));
+
+    if (!user || user.email !== email || user.password !== password) {
+        msgDiv.innerHTML = `
+            <div class="error-message">
+                ERR // invalid email or password
+            </div>
+        `;
+        return;
+    }
+
+    localStorage.setItem("loggedIn", "true");
+
+    msgDiv.innerHTML = `
+        <div class="loading">
+            SYSTEM // authentication successful... logging into dashboard
+        </div>
+    `;
+
+    document.getElementById("loginBtn").disabled = true;
+
+    setTimeout(() => {
+        window.location.href = "dashboard.html";
+    }, 1000);
+}
+</script>
+
+</body>
+</html>
